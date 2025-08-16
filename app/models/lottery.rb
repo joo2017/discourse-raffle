@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
 class Lottery < ActiveRecord::Base
-  # 定义与Discourse核心模型的关联关系
+  # 修正关联关系
+  # 我们明确告诉 Rails, user 的关联是通过 'created_by_id' 这个外键
+  # 并且这个关联的名字叫做 'created_by'
+  belongs_to :created_by, class_name: 'User', foreign_key: 'created_by_id'
+  
+  # 我们保留这个，因为它依然很有用
   belongs_to :topic
-  belongs_to :user
 
-  # CORRECTED SYNTAX: 将属性名 :status 和 值的哈希 {} 作为两个独立的参数传递
-  # 这是更现代、更健壮的写法，可以兼容所有新版本的Rails。
   enum :status, {
     running: 'running',
     finished: 'finished',
