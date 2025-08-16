@@ -1,5 +1,10 @@
+# 文件名: discourse-lottery/db/migrate/20250816200000_create_lotteries.rb
+
 class CreateLotteries < ActiveRecord::Migration[6.0]
   def change
+    # 在创建之前，先确保旧的同名表被彻底删除，以防万一
+    drop_table :lotteries, if_exists: true
+
     create_table :lotteries do |t|
       # 关联信息
       t.integer :topic_id, null: false
@@ -8,23 +13,22 @@ class CreateLotteries < ActiveRecord::Migration[6.0]
       # 核心抽奖规则
       t.string :draw_method, null: false # "random" 或 "specified_floor"
       t.integer :winner_count, default: 1
-      t.text :specified_floors # 存储指定楼层，例如 "10,20,30"
-      t.datetime :draw_time, null: false
+      t.text :specified_floors
 
-      # 参与和开奖策略
+      # 触发与策略
+      t.datetime :draw_time, null: false
       t.integer :min_participants, default: 0
       t.string :on_insufficient_participants, null: false # "proceed" 或 "cancel"
 
       # 状态与结果
-      t.string :status, null: false, default: 'running' # running, finished, cancelled
-      t.jsonb :winner_data # 存储中奖者信息 [{user_id: 123, username: 'sam', post_number: 10}, ...]
+      t.string :status, null: false, default: 'running'
+      t.jsonb :winner_data
 
       t.timestamps
     end
 
-    # 为常用查询字段添加索引，以提高性能
     add_index :lotteries, :topic_id, unique: true
+    add_index :lotteries, :user_id
     add_index :lotteries, :status
-    add_index :lotteries, :draw_time
   end
 end
