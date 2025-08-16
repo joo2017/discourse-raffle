@@ -1,5 +1,3 @@
 plugins:
-  lottery_enabled:
+  raffle_enabled:
     default: true
-    # client: false 是默认值, 意思是这个设置项只在服务器端可见, 前端JS无法获取.
-    # 这对于一个总开关来说是正确的, 所以我们不用写 client: true
