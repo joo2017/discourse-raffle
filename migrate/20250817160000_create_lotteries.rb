@@ -2,33 +2,26 @@
 
 class CreateLotteries < ActiveRecord::Migration[6.0]
   def change
-    # 在创建之前，先确保旧的同名表被彻底删除，以防万一
+    # 魔法就在这里：这行代码是“驱魔令”。
+    # 它告诉数据库：“在做任何事情之前，先找到并彻底摧毁任何名为 lotteries 的旧表。”
     drop_table :lotteries, if_exists: true
 
+    # “驱魔”完成后，我们再用我们全新的、正确的设计来建造新家。
     create_table :lotteries do |t|
-      # 关联信息
       t.integer :topic_id, null: false
-      t.integer :user_id, null: false # 发起抽奖的用户 ID
-
-      # 核心抽奖规则
-      t.string :draw_method, null: false # "random" 或 "specified_floor"
+      t.integer :user_id, null: false # 使用 user_id
+      t.string :draw_method, null: false # 使用 draw_method
       t.integer :winner_count, default: 1
       t.text :specified_floors
-
-      # 触发与策略
       t.datetime :draw_time, null: false
       t.integer :min_participants, default: 0
-      t.string :on_insufficient_participants, null: false # "proceed" 或 "cancel"
-
-      # 状态与结果
+      t.string :on_insufficient_participants, null: false
       t.string :status, null: false, default: 'running'
       t.jsonb :winner_data
-
       t.timestamps
     end
 
     add_index :lotteries, :topic_id, unique: true
     add_index :lotteries, :user_id
-    add_index :lotteries, :status
   end
 end
