@@ -5,9 +5,9 @@ class Lottery < ActiveRecord::Base
   belongs_to :topic
   belongs_to :user
 
-  # 使用枚举(enum)来更优雅地管理状态字段
-  # 这会给我们带来一些好用的方法，例如 lottery.running?, lottery.finished! 等
-  enum status: {
+  # CORRECTED SYNTAX: 将属性名 :status 和 值的哈希 {} 作为两个独立的参数传递
+  # 这是更现代、更健壮的写法，可以兼容所有新版本的Rails。
+  enum :status, {
     running: 'running',
     finished: 'finished',
     cancelled: 'cancelled'
